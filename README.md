@@ -1,2 +1,3 @@
-# pi-mirror
-m-mirror interface
+PI Mirror Display Interface
+===========================
+

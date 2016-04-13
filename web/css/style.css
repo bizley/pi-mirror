@@ -1,0 +1,61 @@
+body {
+    background-color:#000;
+    color:#fff;
+    font-size:16px;
+    font-family: 'Dosis', sans-serif;
+}
+.deg {
+    font-size:0.6em;
+    vertical-align: super;
+}
+#main {
+    position:absolute;
+    top:0;
+    left:0;
+}
+#hours {
+    position:absolute;
+    top:0;
+    left:0;
+    width:170px;
+    font-size:10em;
+    text-align:right;
+}
+#colon {
+    position:absolute;
+    top:-20px;
+    left:170px;
+    width:30px;
+    font-size:10em;
+    text-align:center;
+}
+#minutes {
+    position:absolute;
+    top:0;
+    left:200px;
+    width:170px;
+    font-size:10em;
+    text-align:left;
+}
+#weather {
+    position:absolute;
+    top:35px;
+    left:375px;
+    width:90px;
+    font-size:5em;
+    text-align:center;
+}
+#degrees {
+    position:absolute;
+    top:35px;
+    left:465px;
+    width:110px;
+    font-size:5em;
+}
+#date {
+    position:absolute;
+    top:130px;
+    left:390px;
+    width:180px;
+    font-size:1.5em;
+}

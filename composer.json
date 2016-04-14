@@ -3,12 +3,12 @@
     "description": "PI Mirror Display Interface",
     "type": "project",
     "license": "BSD-3-Clause",
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "require": {
         "php": ">=5.4.0",
         "yiisoft/yii2": ">=2.0.5",
         "yiisoft/yii2-bootstrap": "*",
-        "yiisoft/yii2-swiftmailer": "*"
+        "yiisoft/yii2-httpclient": "~2.0.0"
     },
     "config": {
         "process-timeout": 1800

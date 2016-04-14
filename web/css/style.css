@@ -41,20 +41,12 @@ body {
     position:absolute;
     top:35px;
     left:375px;
-    width:90px;
-    font-size:5em;
-    text-align:center;
-}
-#degrees {
-    position:absolute;
-    top:35px;
-    left:465px;
-    width:110px;
+    width:230px;
     font-size:5em;
 }
 #date {
     position:absolute;
-    top:130px;
+    top:135px;
     left:390px;
     width:180px;
     font-size:1.5em;

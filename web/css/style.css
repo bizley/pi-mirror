@@ -47,7 +47,41 @@ body {
 #date {
     position:absolute;
     top:135px;
-    left:390px;
+    left:380px;
     width:180px;
     font-size:1.5em;
+}
+#weather-extra {
+    position:absolute;
+    top:45px;
+    left:570px;
+    width:180px;
+    font-size:1.5em;
+}
+.icon-column {
+    float:left;
+    width:35px;
+    text-align:center;
+}
+#forecast {
+    position:absolute;
+    top:165px;
+    left:380px;
+    width:400px;
+    font-size:1.1em;
+}
+.forecast-row {
+    clear:both;
+    height:85px;
+    margin-top:10px;
+}
+.forecast-hour {
+    float:left;
+    font-size:1.6em;
+    width:100px;
+    text-align:center;
+}
+.forecast-hour .hour {
+    font-size:0.5em;
+    display:block;
 }

@@ -61,6 +61,27 @@ class SiteController extends Controller
             'period'    => $period,
             'weatherId' => $weather->weatherId,
             'temp'      => $weather->temp,
+            'pressure'  => $weather->pressure,
+            'humidity'  => $weather->humidity,
+            'windDeg'   => $weather->windDeg,
+            'windSpeed' => $weather->windSpeed,
+            'clouds'    => $weather->clouds,
+        ];
+    }
+    
+    /**
+     * AJAX forecast weather response.
+     */
+    public function actionForecast()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        
+        $forecast = new OpenWeatherMap(['key' => Yii::$app->params['open-weather-map-api-id']]);
+        
+        return [
+            'today'      => $forecast->today,
+            'tomorrow'   => $forecast->tomorrow,
+            'overmorrow' => $forecast->overmorrow,
         ];
     }
 }

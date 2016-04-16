@@ -16,11 +16,10 @@ class AppAsset extends AssetBundle
         'https://fonts.googleapis.com/css?family=Dosis:400,700&subset=latin,latin-ext',
         'css/style.css',
         'css/weather-icons.min.css',
+        'css/weather-icons-wind.min.css',
     ];
     public $js = [
         'js/mirror.js',
     ];
-    public $depends = [
-//        'yii\web\YiiAsset',
-    ];
+    public $depends = [];
 }

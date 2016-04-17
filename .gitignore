@@ -28,3 +28,6 @@ phpunit.phar
 
 # local parameters
 /config/params-local.php
+/config/google.json
+/config/token.json
+/config/refresh.json

@@ -88,9 +88,30 @@ function forecast() {
     xhr.open('GET', '/site/forecast', true);
     xhr.send(null);
 }
+function calendarXhrComplete(event) {
+    if (parseInt(event.target.readyState) !== 4) return;
+    if (parseInt(event.target.status) === 200) {
+        var response = JSON.parse(event.target.responseText);
+        var events = '';
+        if (response !== null && response.length) {
+            for (var e in response) {
+                events += '<div class="event"><div class="date">' + response[e].date + '</div>' + response[e].event + '</div>';
+            }
+        }
+        document.getElementById('events').innerHTML = events;
+    }
+}
+function calendar() {
+    var xhr = new XMLHttpRequest();
+    xhr.addEventListener('readystatechange', calendarXhrComplete);
+    xhr.open('GET', '/site/events', true);
+    xhr.send(null);
+}
 clock();
 window.setInterval(clock, 1000);
 weather();
 window.setInterval(weather, 600000);
 forecast();
 window.setInterval(forecast, 1800000);
+calendar();
+window.setInterval(calendar, 3600000);

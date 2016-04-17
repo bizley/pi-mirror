@@ -8,7 +8,8 @@
         "php": ">=5.4.0",
         "yiisoft/yii2": ">=2.0.5",
         "yiisoft/yii2-bootstrap": "*",
-        "yiisoft/yii2-httpclient": "~2.0.0"
+        "yiisoft/yii2-httpclient": "~2.0.0",
+        "google/apiclient": "^2.0.0@RC"
     },
     "config": {
         "process-timeout": 1800

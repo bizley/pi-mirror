@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\GoogleCalendar;
 use app\models\OpenWeatherMap;
 use Yii;
 use yii\web\Controller;
@@ -83,5 +84,46 @@ class SiteController extends Controller
             'tomorrow'   => $forecast->tomorrow,
             'overmorrow' => $forecast->overmorrow,
         ];
+    }
+    
+    /**
+     * AJAX calendar events response.
+     */
+    public function actionEvents()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        
+        $upcoming = [];
+        $calendar = new GoogleCalendar;
+        
+        $specificCals = ['primary', Yii::$app->params['calendars']['birthdays'], Yii::$app->params['calendars']['holidays']];
+        foreach ($specificCals as $cal) {
+            $events = $calendar->getEvents($cal);
+            foreach ($events->getItems() as $event) {
+                $start = $event->start->dateTime;
+                if (empty($start)) {
+                    $start = $event->start->date;
+                    $date  = date('Y/m/d', strtotime($start));
+                } else {
+                    $date  = date('H:i Y/m/d', strtotime($start));
+                }
+                $upcoming[] = [
+                    'stamp' => strtotime($start),
+                    'event' => $event->getSummary(),
+                    'date'  => $date,
+                ];
+            }
+        }
+
+        if (!empty($upcoming)) {
+            uasort($upcoming, function ($a, $b) {
+                if ($a['stamp'] == $b['stamp']) {
+                    return 0;
+                }
+                return ($a['stamp'] < $b['stamp']) ? -1 : 1;
+            });
+        }
+        
+        return array_slice($upcoming, 0, 10);
     }
 }

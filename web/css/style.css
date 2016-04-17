@@ -69,6 +69,7 @@ body {
     right:0;
     width:400px;
     font-size:1.1em;
+    color:#999;
 }
 .forecast-row {
     clear:both;
@@ -84,4 +85,25 @@ body {
 .forecast-hour .hour {
     font-size:0.5em;
     display:block;
+}
+#events {
+    position:absolute;
+    text-align:right;
+    font-size:1.5em;
+    top:460px;
+    right:50px;
+    width:700px;
+}
+.event {
+    border-top:1px solid #666;
+    padding:10px 0;
+}
+.date {
+    float:right;
+    font-size:0.8em;
+    vertical-align:bottom;
+    width:150px;
+    text-align:left;
+    margin-left:20px;
+    color:#999;
 }

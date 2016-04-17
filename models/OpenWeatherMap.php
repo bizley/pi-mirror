@@ -339,16 +339,17 @@ class OpenWeatherMap extends Component
     
     /**
      * Returns forecast weather for the rest of the day (6:00, 12:00, 18:00).
+     * Skips current time > hour - 30 minutes.
      */
     public function getToday()
     {
         $list = [];
         $forecast = $this->forecast;
         if (!empty($forecast) && !empty($forecast['list'])) {
-            $hour = date('G');
-            if ($hour < 18) {
+            $hour = date('Gm');
+            if ($hour < 1730) {
                 $start = '06';
-                while ($hour >= (int)$start) {
+                while ($hour >= ((int)$start - 1) . '30') {
                     $start = (int)$start + 6;
                 }
                 $date = date('Y-m-d');

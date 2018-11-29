@@ -1,44 +1,26 @@
 {
-    "name": "pi-mirror",
+    "name": "bizley/pi-mirror",
     "description": "PI Mirror Display Interface",
     "type": "project",
     "license": "BSD-3-Clause",
     "minimum-stability": "stable",
     "require": {
-        "php": ">=5.4.0",
-        "yiisoft/yii2": ">=2.0.5",
-        "yiisoft/yii2-bootstrap": "*",
+        "php": ">=7.2.0",
+        "yiisoft/yii2": ">=2.0.15.1 <2.1.0",
+        "yiisoft/yii2-bootstrap": "~2.0.8",
         "yiisoft/yii2-httpclient": "~2.0.0",
         "google/apiclient": "^2.0"
     },
+    "require-dev": {
+        "roave/security-advisories": "dev-master"
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        }
+    ],
     "config": {
         "process-timeout": 1800
-    },
-    "scripts": {
-        "post-create-project-cmd": [
-            "yii\\composer\\Installer::postCreateProject"
-        ]
-    },
-    "extra": {
-        "asset-vcs-driver-options": {
-            "github-no-api": true
-        },
-        "asset-pattern-skip-version": "(-build)",
-        "yii\\composer\\Installer::postCreateProject": {
-            "setPermission": [
-                {
-                    "runtime": "0777",
-                    "web/assets": "0777",
-                    "yii": "0755"
-                }
-            ],
-            "generateCookieValidationKey": [
-                "config/web.php"
-            ]
-        },
-        "asset-installer-paths": {
-            "npm-asset-library": "vendor/npm",
-            "bower-asset-library": "vendor/bower"
-        }
     }
 }

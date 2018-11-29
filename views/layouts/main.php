@@ -1,15 +1,19 @@
 <?php
 
-/* @var $this View */
-/* @var $content string */
+declare(strict_types=1);
 
 use app\assets\AppAsset;
 use yii\helpers\Html;
 use yii\web\View;
 
+/* @var $this View */
+/* @var $content string */
+
 AppAsset::register($this);
+
+$this->beginPage();
+
 ?>
-<?php $this->beginPage() ?>
 <!DOCTYPE html>
 <html lang="<?= Yii::$app->language ?>">
 <head>
@@ -17,14 +21,14 @@ AppAsset::register($this);
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
-    <?php $this->head() ?>
+    <?php $this->head(); ?>
 </head>
 <body>
-<?php $this->beginBody() ?>
+<?php $this->beginBody(); ?>
 
 <?= $content ?>
 
 <?php $this->endBody() ?>
 </body>
 </html>
-<?php $this->endPage() ?>
+<?php $this->endPage();

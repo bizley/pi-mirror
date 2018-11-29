@@ -1,4 +1,10 @@
-<?php $this->title = 'PI Mirror'; ?>
+<?php
+
+declare(strict_types=1);
+
+$this->title = 'PI Mirror';
+
+?>
 <div id="main">
     <div id="hours">00</div>
     <div id="colon"></div>

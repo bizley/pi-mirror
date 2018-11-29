@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace app\models;
 
 use Exception;
@@ -16,16 +18,15 @@ use yii\httpclient\Client;
  */
 class OpenWeatherMap extends Component
 {
+    /**
+     * @var string API current weather URL
+     */
+    public $current_url = 'https://api.openweathermap.org/data/2.5/weather';
     
     /**
-     * @var string API current weather url
+     * @var string API forecast weather URL
      */
-    public $current_url = 'http://api.openweathermap.org/data/2.5/weather';
-    
-    /**
-     * @var string API forecast weather url
-     */
-    public $forecast_url = 'http://api.openweathermap.org/data/2.5/forecast';
+    public $forecast_url = 'https://api.openweathermap.org/data/2.5/forecast';
     
     /**
      * @var string API key
@@ -43,17 +44,17 @@ class OpenWeatherMap extends Component
     public $lang = 'pl';
     
     /**
-     * @var integer city ID
+     * @var int city ID
      */
     public $city = 3081368;
     
     /**
-     * @var integer cache duration for current weather
+     * @var int cache duration for current weather
      */
     public $current_duration = 600;
     
     /**
-     * @var integer cache duration for forecast weather
+     * @var int cache duration for forecast weather
      */
     public $forecast_duration = 1800;
     
@@ -65,22 +66,23 @@ class OpenWeatherMap extends Component
     /**
      * @var array current weather conditions
      */
-    private $_weather = false;
+    private $_weather;
     
     /**
      * @var array forecast weather conditions
      */
-    private $_forecast = false;
+    private $_forecast;
     
     /**
      * Returns HTTP client object.
      * @return Client
      */
-    public function getClient()
+    public function getClient(): Client
     {
-        if (empty($this->_client)) {
-            $this->_client = new Client;
+        if ($this->_client === null) {
+            $this->_client = new Client();
         }
+
         return $this->_client;
     }
     
@@ -88,347 +90,402 @@ class OpenWeatherMap extends Component
      * Returns cache component.
      * @return Cache
      */
-    public function getCache()
+    public function getCache(): Cache
     {
         return Yii::$app->cache;
     }
     
     /**
      * Checks current weather.
-     * @return mixed
+     * @return array|bool
      */
     public function checkWeather()
     {
         try {
             $response = $this->client->createRequest()
-                    ->setMethod('get')
-                    ->setUrl($this->current_url)
-                    ->setData([
-                        'id'    => $this->city,
-                        'units' => $this->units,
-                        'lang'  => $this->lang,
-                        'APPID' => $this->key
-                    ])
-                    ->send();
+                ->setMethod('get')
+                ->setUrl($this->current_url)
+                ->setData([
+                    'id' => $this->city,
+                    'units' => $this->units,
+                    'lang' => $this->lang,
+                    'APPID' => $this->key
+                ])
+                ->send();
+
             if (!$response->isOk) {
                 throw new Exception($response->data);
             }
+
             return $response->data;
+
         } catch (Exception $e) {
             Yii::error($e->getMessage());
         }
+
         return false;
     }
     
     /**
      * Returns cached weather conditions.
+     * @return array|bool
      */
     public function getWeather()
     {
         $this->_weather = $this->cache->get('weather');
+
         if ($this->_weather === false) {
             $this->_weather = $this->checkWeather();
+
             if ($this->_weather !== false) {
                 $this->cache->set('weather', $this->_weather, $this->current_duration);
             }
         }
+
         return $this->_weather;
     }
     
     /**
      * Returns city latitude.
-     * @return float
+     * @return float|null
      */
-    public function getLatitude()
+    public function getLatitude(): ?float
     {
-        $weather = $this->weather;
+        $weather = $this->getWeather();
+
         return !empty($weather['coord']['lat']) ? $weather['coord']['lat'] : null;
     }
     
     /**
      * Returns city longitude.
-     * @return float
+     * @return float|null
      */
-    public function getLongitude()
+    public function getLongitude(): ?float
     {
-        $weather = $this->weather;
+        $weather = $this->getWeather();
+
         return !empty($weather['coord']['lon']) ? $weather['coord']['lon'] : null;
     }
     
     /**
      * Returns weather ID.
-     * @return integer
+     * @return int|null
      */
-    public function getWeatherId()
+    public function getWeatherId(): ?int
     {
-        $weather = $this->weather;
+        $weather = $this->getWeather();
+
         return !empty($weather['weather'][0]['id']) ? $weather['weather'][0]['id'] : null;
     }
     
     /**
      * Returns weather main.
-     * @return string
+     * @return string|null
      */
-    public function getWeatherMain()
+    public function getWeatherMain(): ?string
     {
-        $weather = $this->weather;
+        $weather = $this->getWeather();
+
         return !empty($weather['weather'][0]['main']) ? $weather['weather'][0]['main'] : null;
     }
     
     /**
      * Returns weather description.
-     * @return string
+     * @return string|null
      */
-    public function getWeatherDescription()
+    public function getWeatherDescription(): ?string
     {
-        $weather = $this->weather;
+        $weather = $this->getWeather();
+
         return !empty($weather['weather'][0]['description']) ? $weather['weather'][0]['description'] : null;
     }
     
     /**
      * Returns weather icon.
-     * @return string
+     * @return string|null
      */
-    public function getWeatherIcon()
+    public function getWeatherIcon(): ?string
     {
-        $weather = $this->weather;
+        $weather = $this->getWeather();
+
         return !empty($weather['weather'][0]['icon']) ? $weather['weather'][0]['icon'] : null;
     }
     
     /**
      * Returns temperature.
-     * @return integer
+     * @return int|null
      */
-    public function getTemp()
+    public function getTemp(): ?int
     {
-        $weather = $this->weather;
-        return !empty($weather['main']['temp']) ? round($weather['main']['temp']) : null;
+        $weather = $this->getWeather();
+
+        return !empty($weather['main']['temp']) ? (int) round($weather['main']['temp']) : null;
     }
     
     /**
      * Returns pressure.
-     * @return integer
+     * @return int|null
      */
-    public function getPressure()
+    public function getPressure(): ?int
     {
-        $weather = $this->weather;
-        return !empty($weather['main']['pressure']) ? round($weather['main']['pressure']) : null;
+        $weather = $this->getWeather();
+
+        return !empty($weather['main']['pressure']) ? (int) round($weather['main']['pressure']) : null;
     }
     
     /**
      * Returns humidity.
-     * @return integer
+     * @return int|null
      */
-    public function getHumidity()
+    public function getHumidity(): ?int
     {
-        $weather = $this->weather;
+        $weather = $this->getWeather();
+
         return !empty($weather['main']['humidity']) ? $weather['main']['humidity'] : null;
     }
     
     /**
-     * Returns temp_min.
-     * @return integer
+     * Returns minimal temperature.
+     * @return int|null
      */
-    public function getTempMin()
+    public function getTempMin(): ?int
     {
-        $weather = $this->weather;
-        return !empty($weather['main']['temp_min']) ? round($weather['main']['temp_min']) : null;
+        $weather = $this->getWeather();
+
+        return !empty($weather['main']['temp_min']) ? (int) round($weather['main']['temp_min']) : null;
     }
     
     /**
-     * Returns temp_max.
-     * @return integer
+     * Returns maximal temperature.
+     * @return int|null
      */
-    public function getTempMax()
+    public function getTempMax(): ?int
     {
-        $weather = $this->weather;
-        return !empty($weather['main']['temp_max']) ? round($weather['main']['temp_max']) : null;
+        $weather = $this->getWeather();
+
+        return !empty($weather['main']['temp_max']) ? (int) round($weather['main']['temp_max']) : null;
     }
     
     /**
      * Returns wind speed.
-     * @return float
+     * @return float|null
      */
-    public function getWindSpeed()
+    public function getWindSpeed(): ?float
     {
-        $weather = $this->weather;
+        $weather = $this->getWeather();
+
         return !empty($weather['wind']['speed']) ? $weather['wind']['speed'] : null;
     }
     
     /**
      * Returns wind deg.
-     * @return integer
+     * @return int|null
      */
-    public function getWindDeg()
+    public function getWindDeg(): ?int
     {
-        $weather = $this->weather;
+        $weather = $this->getWeather();
+
         return !empty($weather['wind']['deg']) ? $weather['wind']['deg'] : null;
     }
     
     /**
      * Returns sunrise.
-     * @return integer
+     * @return int|null
      */
-    public function getSunrise()
+    public function getSunrise(): ?int
     {
-        $weather = $this->weather;
+        $weather = $this->getWeather();
+
         return !empty($weather['sys']['sunrise']) ? $weather['sys']['sunrise'] : null;
     }
     
     /**
      * Returns sunset.
-     * @return integer
+     * @return int|null
      */
-    public function getSunset()
+    public function getSunset(): ?int
     {
-        $weather = $this->weather;
+        $weather = $this->getWeather();
+
         return !empty($weather['sys']['sunset']) ? $weather['sys']['sunset'] : null;
     }
     
     /**
      * Returns clouds.
-     * @return integer
+     * @return int|null
      */
-    public function getClouds()
+    public function getClouds(): ?int
     {
-        $weather = $this->weather;
+        $weather = $this->getWeather();
+
         return !empty($weather['clouds']['all']) ? $weather['clouds']['all'] : null;
     }
     
     /**
      * Checks forecast weather.
-     * @return mixed
+     * @return bool|array
      */
     public function checkForecast()
     {
         try {
             $response = $this->client->createRequest()
-                    ->setMethod('get')
-                    ->setUrl($this->forecast_url)
-                    ->setData([
-                        'id'    => $this->city,
-                        'units' => $this->units,
-                        'lang'  => $this->lang,
-                        'APPID' => $this->key
-                    ])
-                    ->send();
+                ->setMethod('get')
+                ->setUrl($this->forecast_url)
+                ->setData([
+                    'id'    => $this->city,
+                    'units' => $this->units,
+                    'lang'  => $this->lang,
+                    'APPID' => $this->key,
+                ])
+                ->send();
+
             if (!$response->isOk) {
                 throw new Exception($response->data);
             }
+
             return $response->data;
+
         } catch (Exception $e) {
             Yii::error($e->getMessage());
         }
+
         return false;
     }
     
     /**
      * Returns cached forecast weather conditions.
+     * @return bool|array
      */
     public function getForecast()
     {
         $this->_forecast = $this->cache->get('forecast');
+
         if ($this->_forecast === false) {
             $this->_forecast = $this->checkForecast();
+
             if ($this->_forecast !== false) {
                 $this->cache->set('forecast', $this->_forecast, $this->forecast_duration);
             }
         }
+
         return $this->_forecast;
     }
     
     /**
      * Returns forecast weather for the rest of the day (6:00, 12:00, 18:00).
      * Skips current time > hour - 30 minutes.
+     * @return array
      */
-    public function getToday()
+    public function getToday(): array
     {
         $list = [];
-        $forecast = $this->forecast;
-        if (!empty($forecast) && !empty($forecast['list'])) {
+        $forecast = $this->getForecast();
+
+        if (!empty($forecast['list'])) {
             $hour = date('Gm');
+
             if ($hour < 1730) {
                 $start = '06';
-                while ($hour >= ((int)$start - 1) . '30') {
-                    $start = (int)$start + 6;
+
+                while ($hour >= ((int) $start - 1) . '30') {
+                    $start = (int) $start + 6;
                 }
+
                 $date = date('Y-m-d');
+
                 foreach ($forecast['list'] as $weather) {
-                    if (substr($weather['dt_txt'], 0, 10) != $date) {
+                    if (strpos($weather['dt_txt'], $date) !== 0) {
                         break;
                     }
-                    if (substr($weather['dt_txt'], 0, 13) == $date . ' ' . $start) {
-                        $list[(string)$start . ':00'] = [
+
+                    if (strpos($weather['dt_txt'], $date . ' ' . $start) === 0) {
+                        $list[$start . ':00'] = [
                             'weatherId' => !empty($weather['weather'][0]['id']) ? $weather['weather'][0]['id'] : null,
-                            'temp'      => !empty($weather['main']['temp']) ? round($weather['main']['temp']) : null,
+                            'temp' => !empty($weather['main']['temp']) ? round($weather['main']['temp']) : null,
                         ];
-                        $start = (int)$start + 6;
+
+                        $start = (int) $start + 6;
                     }
                 }
             }
         }
+
         return $list;
     }
     
     /**
      * Returns forecast weather for the next day (6:00, 12:00, 18:00).
+     * @return array
      */
-    public function getTomorrow()
+    public function getTomorrow(): array
     {
         $list = [];
-        $forecast = $this->forecast;
-        if (!empty($forecast) && !empty($forecast['list'])) {
-            $start     = '06';
+        $forecast = $this->getForecast();
+
+        if (!empty($forecast['list'])) {
+            $start = '06';
             $startDate = date('Y-m-d', strtotime('+1 day'));
             $dayParsed = false;
+
             foreach ($forecast['list'] as $weather) {
-                if ($dayParsed && substr($weather['dt_txt'], 0, 10) != $startDate) {
+                if ($dayParsed && strpos($weather['dt_txt'], $startDate) !== 0) {
                     break;
                 }
-                if (substr($weather['dt_txt'], 0, 13) == $startDate . ' ' . $start) {
-                    $dayParsed    = true;
-                    $list[(string)$start . ':00'] = [
+
+                if (strpos($weather['dt_txt'], $startDate . ' ' . $start) === 0) {
+                    $dayParsed = true;
+
+                    $list[$start . ':00'] = [
                         'weatherId' => !empty($weather['weather'][0]['id']) ? $weather['weather'][0]['id'] : null,
                         'temp'      => !empty($weather['main']['temp']) ? round($weather['main']['temp']) : null,
                     ];
-                    $start = (int)$start + 6;
+
+                    $start = (int) $start + 6;
                     if ($start > 18) {
                         break;
                     }
                 }
             }
         }
+
         return $list;
     }
     
     /**
      * Returns forecast weather for the day after tomorrow (6:00, 12:00, 18:00).
+     * @return array
      */
-    public function getOvermorrow()
+    public function getOvermorrow(): array
     {
         $list = [];
-        $forecast = $this->forecast;
-        if (!empty($forecast) && !empty($forecast['list'])) {
-            $start     = '06';
+        $forecast = $this->getForecast();
+
+        if (!empty($forecast['list'])) {
+            $start = '06';
             $startDate = date('Y-m-d', strtotime('+2 days'));
             $dayParsed = false;
+
             foreach ($forecast['list'] as $weather) {
-                if ($dayParsed && substr($weather['dt_txt'], 0, 10) != $startDate) {
+                if ($dayParsed && strpos($weather['dt_txt'], $startDate) !== 0) {
                     break;
                 }
-                if (substr($weather['dt_txt'], 0, 13) == $startDate . ' ' . $start) {
+
+                if (strpos($weather['dt_txt'], $startDate . ' ' . $start) === 0) {
                     $dayParsed    = true;
-                    $list[(string)$start . ':00'] = [
+
+                    $list[$start . ':00'] = [
                         'weatherId' => !empty($weather['weather'][0]['id']) ? $weather['weather'][0]['id'] : null,
                         'temp'      => !empty($weather['main']['temp']) ? round($weather['main']['temp']) : null,
                     ];
-                    $start = (int)$start + 6;
+
+                    $start = (int) $start + 6;
                     if ($start > 18) {
                         break;
                     }
                 }
             }
         }
+
         return $list;
     }
 }

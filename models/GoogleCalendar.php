@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace app\models;
 
 use Google_Client;
@@ -13,15 +15,9 @@ use yii\helpers\Json;
 /**
  * GoogleCalendar
  * @author Bizley
- * 
- * @property Google_Client $client
- * @property Google_Service_Calendar $service
- * @property Google_Service_Calendar_CalendarList $calendarsList
- * @property Google_Service_Calendar_Events $events
  */
 class GoogleCalendar extends Component
 {
-    
     /**
      * @var string Yii alias for google.json file path
      */
@@ -43,95 +39,109 @@ class GoogleCalendar extends Component
     protected $_applicationName = 'PI Mirror';
     
     /**
-     * @var Google_Client authorised google client
-     */
-    private $_client;
-    
-    /**
-     * @var Google_Service_Calendar authorised calendar service
-     */
-    private $_service;
-    
-    /**
      * Returns authorised google client.
      * @return Google_Client
+     * @throws \Google_Exception
      */
-    public function getClient()
+    public function getClient(): Google_Client
     {
-        if (empty($this->_client)) {
-            $this->_client = new Google_Client;
+        if ($this->_client === null) {
+            $this->_client = new Google_Client();
             $this->_client->setAuthConfig(Yii::getAlias($this->_authConfig));
             $this->_client->setApplicationName($this->_applicationName);
-            $this->_client->setScopes(Google_Service_Calendar::CALENDAR_READONLY);
+            $this->_client->setScopes([Google_Service_Calendar::CALENDAR_READONLY]);
             $this->_client->setAccessType('offline');
             $this->_client->setAccessToken(Json::decode(file_get_contents(Yii::getAlias($this->_accessToken))));
         }
-        return $this->_getRefreshedClient();
+
+        return $this->getRefreshedClient();
     }
     
     /**
      * Returns refresh token.
      * @return string
      */
-    protected function _getRefreshToken()
+    protected function getRefreshToken(): string
     {
         $token = $this->_client->getRefreshToken() ?: null;
-        if (empty($token)) {
+
+        if ($token === null) {
             $token = Json::decode(file_get_contents(Yii::getAlias($this->_refreshToken)));
         }
+
         return $token;
     }
-    
+
     /**
-     * Returns authorised google client with refreshed token.
+     * @var Google_Client|null authorised Google client
+     */
+    private $_client;
+
+    /**
+     * Returns authorised Google client with refreshed token.
      * @return Google_Client
      */
-    protected function _getRefreshedClient()
+    protected function getRefreshedClient(): Google_Client
     {
-        if (empty($this->_client)) {
+        if ($this->_client === null) {
             return null;
         }
+
         if ($this->_client->isAccessTokenExpired()) {
-            $this->_client->refreshToken($this->_getRefreshToken());
-            file_put_contents(Yii::getAlias($this->_accessToken), Json::encode($this->_client->getAccessToken()));
+            $this->_client->refreshToken($this->getRefreshToken());
+
+            file_put_contents(
+                Yii::getAlias($this->_accessToken),
+                Json::encode($this->_client->getAccessToken())
+            );
         }
+
         return $this->_client;
     }
-    
+
+    /**
+     * @var Google_Service_Calendar|null authorised calendar service
+     */
+    private $_service;
+
     /**
      * Returns authorised calendar service.
      * @return Google_Service_Calendar
+     * @throws \Google_Exception
      */
-    public function getService()
+    public function getService(): Google_Service_Calendar
     {
-        if (empty($this->_service)) {
-            $this->_service = new Google_Service_Calendar($this->client);
+        if ($this->_service === null) {
+            $this->_service = new Google_Service_Calendar($this->getClient());
         }
+
         return $this->_service;
     }
-    
+
     /**
      * Return calendars list.
      * @return Google_Service_Calendar_CalendarList
+     * @throws \Google_Exception
      */
-    public function getCalendarsList()
+    public function getCalendarsList(): Google_Service_Calendar_CalendarList
     {
-        return $this->service->calendarList->listCalendarList();
+        return $this->getService()->calendarList->listCalendarList();
     }
-    
+
     /**
      * Returns calendar events.
      * @param string $calendarId
-     * @param integer $limit
+     * @param int $limit
      * @return Google_Service_Calendar_Events
+     * @throws \Google_Exception
      */
-    public function getEvents($calendarId = 'primary', $limit = 10)
+    public function getEvents(string $calendarId = 'primary', int $limit = 10): Google_Service_Calendar_Events
     {
-        return $this->service->events->listEvents($calendarId, [
-            'maxResults'   => $limit,
-            'orderBy'      => 'startTime',
+        return $this->getService()->events->listEvents($calendarId, [
+            'maxResults' => $limit,
+            'orderBy' => 'startTime',
             'singleEvents' => true,
-            'timeMin'      => date('c'),
+            'timeMin' => date('c'),
         ]);
     }
 }

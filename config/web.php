@@ -1,6 +1,9 @@
 <?php
 
-$params = require(__DIR__ . '/params-local.php');
+declare(strict_types=1);
+
+use yii\log\FileTarget;
+use yii\caching\FileCache;
 
 return [
     'id' => 'pi-mirror',
@@ -11,11 +14,7 @@ return [
             'cookieValidationKey' => 'G_D9zNoNXCFZmd0hcsRaqDLWkbc4id7C',
         ],
         'cache' => [
-            'class' => 'yii\caching\FileCache',
-        ],
-        'user' => [
-            'identityClass' => 'app\models\User',
-            'enableAutoLogin' => true,
+            'class' => FileCache::class,
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
@@ -24,7 +23,7 @@ return [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets' => [
                 [
-                    'class' => 'yii\log\FileTarget',
+                    'class' => FileTarget::class,
                     'levels' => ['error', 'warning'],
                 ],
             ],
@@ -36,5 +35,5 @@ return [
             ],
         ],
     ],
-    'params' => $params,
+    'params' => require __DIR__ . '/params-local.php',
 ];

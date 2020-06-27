@@ -1,117 +1,123 @@
-function clock() {
-    var date  = new Date();
-    var seconds = date.getSeconds();
-    var hours   = date.getHours();
-    var minutes = date.getMinutes();
-    var year    = date.getFullYear();
-    var month   = date.getMonth() + 1;
-    var day     = date.getDate();
-    document.getElementById('hours').innerHTML   = (hours < 10 ? '0' : '') + hours;
-    document.getElementById('minutes').innerHTML = (minutes < 10 ? '0' : '') + minutes;
-    document.getElementById('year').innerHTML    = year;
-    document.getElementById('month').innerHTML   = (month < 10 ? '0' : '') + month;
-    document.getElementById('day').innerHTML     = (day < 10 ? '0' : '') + day;
-    document.getElementById('colon').innerHTML   = seconds % 2 ? '' : ':';
-}
-function weatherXhrComplete(event) {
-    if (parseInt(event.target.readyState) !== 4) return;
-    if (parseInt(event.target.status) === 200) {
-        var response = JSON.parse(event.target.responseText);
-        var weather = '';
-        if (response.period !== null && response.weatherId !== null) {
-            weather += '<span class="wi wi-owm-' + response.period + '-' + response.weatherId + '"></span> ';
-        }
-        if (response.temp !== null) {
-            weather += response.temp + '<span class="wi wi-degrees"></span>';
-        }
-        document.getElementById('weather').innerHTML = weather;
-        var extra = '';
-        if (response.pressure !== null) {
-            extra += '<div class="icon-column"><span class="wi wi-barometer"></span></div>' + response.pressure + ' hPa<br>';
-        }
-        if (response.windDeg !== null && response.windSpeed !== null) {
-            extra += '<div class="icon-column"><span class="wi wi-wind from-' + response.windDeg + '-deg"></span></div>' + response.windSpeed + ' m/s<br>';
-        }
-        if (response.clouds !== null) {
-            extra += '<div class="icon-column"><span class="wi wi-cloudy"></span></div>' + response.clouds + '%<br>';
-        }
-        if (response.humidity !== null) {
-            extra += '<div class="icon-column"><span class="wi wi-raindrop"></span></div>' + response.humidity + '%<br>';
-        }
-        document.getElementById('weather-extra').innerHTML = extra;
+const html = (id, body) => document.getElementById(id).innerHTML = body;
+const dayName = dayNumber => {
+    switch(dayNumber) {
+        case 0: return 'niedziela';
+        case 1: return 'poniedziałek';
+        case 2: return 'wtorek';
+        case 3: return 'środa';
+        case 4: return 'czwartek';
+        case 5: return 'piątek';
+        case 6: return 'sobota';
     }
+    return null;
 }
-function weather() {
-    var xhr = new XMLHttpRequest();
-    xhr.addEventListener('readystatechange', weatherXhrComplete);
-    xhr.open('GET', '/site/weather', true);
-    xhr.send(null);
-}
-function forecastXhrComplete(event) {
-    if (parseInt(event.target.readyState) !== 4) return;
-    if (parseInt(event.target.status) === 200) {
-        var response = JSON.parse(event.target.responseText);
-        var forecast = '';
-        var today    = '';
-        if (response.today !== null) {
-            for (var h in response.today) {
-                today += '<div class="forecast-hour"><span class="wi wi-owm-' + response.today[h].weatherId + '"></span> ' + response.today[h].temp + '<span class="wi wi-degrees"></span><span class="hour">' + h + '</span></div>';
-            }
-        }
-        if (today !== '') {
-            forecast += '<div class="forecast-row"><div>DZISIAJ</div>' + today + '</div>';
-        }
-        var tomorrow = '';
-        if (response.tomorrow !== null) {
-            for (var h in response.tomorrow) {
-                tomorrow += '<div class="forecast-hour"><span class="wi wi-owm-' + response.tomorrow[h].weatherId + '"></span> ' + response.tomorrow[h].temp + '<span class="wi wi-degrees"></span><span class="hour">' + h + '</span></div>';
-            }
-        }
-        if (tomorrow !== '') {
-            forecast += '<div class="forecast-row"><div>JUTRO</div>' + tomorrow + '</div>';
-        }
-        var overmorrow = '';
-        if (response.overmorrow !== null) {
-            for (var h in response.overmorrow) {
-                overmorrow += '<div class="forecast-hour"><span class="wi wi-owm-' + response.overmorrow[h].weatherId + '"></span> ' + response.overmorrow[h].temp + '<span class="wi wi-degrees"></span><span class="hour">' + h + '</span></div>';
-            }
-        }
-        if (overmorrow !== '') {
-            forecast += '<div class="forecast-row"><div>POJUTRZE</div>' + overmorrow + '</div>';
-        }
-        document.getElementById('forecast').innerHTML = forecast;
+const monthName = monthNumber => {
+    switch(monthNumber) {
+        case 1: return ' stycznia ';
+        case 2: return ' lutego ';
+        case 3: return ' marca ';
+        case 4: return ' kwietnia ';
+        case 5: return ' maja ';
+        case 6: return ' czerwca ';
+        case 7: return ' lipca ';
+        case 8: return ' sierpnia ';
+        case 9: return ' września ';
+        case 10: return ' października ';
+        case 11: return ' listopada ';
+        case 12: return ' grudnia ';
     }
+    return null;
 }
-function forecast() {
-    var xhr = new XMLHttpRequest();
-    xhr.addEventListener('readystatechange', forecastXhrComplete);
-    xhr.open('GET', '/site/forecast', true);
-    xhr.send(null);
+const clock = () => {
+    const date = new Date()
+    const seconds = date.getSeconds()
+    const hours = date.getHours()
+    const minutes = date.getMinutes()
+    const year = date.getFullYear()
+    const month = date.getMonth() + 1
+    const day = date.getDate()
+    const dayNumber = date.getUTCDay()
+    html('hours', (hours < 10 ? '0' : '') + hours)
+    html('minutes', (minutes < 10 ? '0' : '') + minutes)
+    html('colon', seconds % 2 ? '' : ':')
+    html('dateString', dayName(dayNumber) + ', ' + (day < 10 ? '0' : '') + day + monthName(month) + year)
 }
-function calendarXhrComplete(event) {
-    if (parseInt(event.target.readyState) !== 4) return;
-    if (parseInt(event.target.status) === 200) {
-        var response = JSON.parse(event.target.responseText);
-        var events = '';
-        if (response !== null && response.length) {
-            for (var e in response) {
-                events += '<div class="event"><div class="date">' + response[e].date + '</div>' + response[e].event + '</div>';
-            }
-        }
-        document.getElementById('events').innerHTML = events;
+const displayWeather = data => {
+    let weather = '';
+    if (data.current.weatherId !== null) {
+        weather += '<span class="wi wi-owm-' + data.current.period + '-' + data.current.weatherId + '"></span>'
     }
+    let degrees = '';
+    if (data.current.temperature !== null) {
+        degrees += data.current.temperature + '<span class="wi wi-degrees"></span>'
+    }
+    if (data.current.feelsLike !== null) {
+        degrees += '<span class="smaller">' + data.current.feelsLike + '<span class="wi wi-degrees"></span></span>'
+    }
+    if (degrees !== '') {
+        degrees = '<div>' + degrees + '</div>'
+    }
+    html('current', weather + degrees)
+    let sunTimes = '';
+    if (data.current.sunrise !== null) {
+        sunTimes += ' <span class="wi wi-sunrise"></span> ' + data.current.sunrise
+    }
+    if (data.current.sunset !== null) {
+        sunTimes += ' <span class="wi wi-sunset"></span> ' + data.current.sunset
+    }
+    html('sun', sunTimes)
+    let extra = '';
+    if (data.current.pressure !== null) {
+        extra += '<div class="icon-column"><span class="wi wi-barometer"></span></div>' + data.current.pressure + ' hPa<br>';
+    }
+    if (data.current.windDirection !== null && data.current.windSpeed !== null) {
+        extra += '<div class="icon-column"><span class="wi wi-wind from-' + data.current.windDirection + '-deg"></span></div>' + data.current.windSpeed + ' m/s<br>';
+    }
+    if (data.current.cloudiness !== null) {
+        extra += '<div class="icon-column"><span class="wi wi-cloudy"></span></div>' + data.current.cloudiness + '%<br>';
+    }
+    if (data.current.humidity !== null) {
+        extra += '<div class="icon-column"><span class="wi wi-humidity"></span></div>' + data.current.humidity + '%<br>';
+    }
+    if (data.current.rain !== null) {
+        extra += '<div class="icon-column"><span class="wi wi-rain"></span></div>' + data.current.rain + ' mm<br>';
+    }
+    if (data.current.snow !== null) {
+        extra += '<div class="icon-column"><span class="wi wi-snow"></span></div>' + data.current.snow + ' mm<br>';
+    }
+    html('extra', extra)
+    const forecastHourly = data.hourly.map(item => {
+        return '<li><span class="smaller">' + item.time
+            + '</span><br><span class="wi wi-owm-' + item.weatherId + '"></span> '
+            + item.temperature + '<span class="wi wi-degrees"></span>'
+            + '<span class="smaller">' + item.feelsLike + '<span class="wi wi-degrees"></span></span>'
+            + '</li>'
+    })
+    const forecastDaily = data.daily.map(item => {
+        return '<li><span class="smaller">' + item.date
+            + '</span><br><span class="wi wi-owm-' + item.weatherId + '"></span> <span class="smaller">'
+            + item.weatherDescription + '</span><br>'
+            + '<table><tr>'
+            + '<td>' + item.morningTemperature + '<span class="wi wi-degrees"></span></td>'
+            + '<td>' + item.dayTemperature + '<span class="wi wi-degrees"></span></td>'
+            + '<td>' + item.eveningTemperature + '<span class="wi wi-degrees"></span></td>'
+            + '<td>' + item.nightTemperature + '<span class="wi wi-degrees"></span></td>'
+            + '</tr><tr>'
+            + '<td class="smaller">' + item.morningFeelsLike + '<span class="wi wi-degrees"></span></td>'
+            + '<td class="smaller">' + item.dayFeelsLike + '<span class="wi wi-degrees"></span></td>'
+            + '<td class="smaller">' + item.eveningFeelsLike + '<span class="wi wi-degrees"></span></td>'
+            + '<td class="smaller">' + item.nightFeelsLike + '<span class="wi wi-degrees"></span></td>'
+            + '</tr></table>'
+            + '</li>'
+    })
+    html('forecast', forecastHourly.join('') + forecastDaily.join(''))
 }
-function calendar() {
-    var xhr = new XMLHttpRequest();
-    xhr.addEventListener('readystatechange', calendarXhrComplete);
-    xhr.open('GET', '/site/events', true);
-    xhr.send(null);
+const weather = () => {
+    fetch('/site/data')
+        .then(response => response.json())
+        .then(data => displayWeather(data))
+        .catch(err => console.error("Something went wrong!", err));
 }
-clock();
-window.setInterval(clock, 1000);
-weather();
-window.setInterval(weather, 600000);
-forecast();
-window.setInterval(forecast, 1800000);
-calendar();
-window.setInterval(calendar, 3600000);
+weather()
+window.setInterval(clock, 1000)
+window.setInterval(weather, 600000)

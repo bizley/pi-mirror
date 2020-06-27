@@ -1,108 +1,98 @@
 body {
-    background-color:#000;
-    color:#fff;
-    font-size:16px;
+    background-color: #000;
+    color: #fff;
+    font-size: 16px;
     font-family: 'Dosis', sans-serif;
 }
-.deg {
-    font-size:0.6em;
-    vertical-align: super;
+
+#clock {
+    position: absolute;
+    top: 0;
+    left: 0;
+    text-align: center;
 }
-#main {
-    position:absolute;
-    top:0;
-    right:0;
+
+#time {
+    font-size: 10em;
 }
-#hours {
-    position:absolute;
-    top:0;
-    right:630px;
-    width:170px;
-    font-size:10em;
-    text-align:right;
+
+#sun {
+    margin-top: 10px;
 }
+
 #colon {
-    position:absolute;
-    top:-20px;
-    right:600px;
-    width:30px;
-    font-size:10em;
-    text-align:center;
+    display: inline-block;
+    width: 36px;
+    text-align: center;
 }
-#minutes {
-    position:absolute;
-    top:0;
-    right:430px;
-    width:170px;
-    font-size:10em;
-    text-align:left;
-}
-#weather {
-    position:absolute;
-    top:35px;
-    right:190px;
-    width:240px;
-    font-size:5em;
-}
+
 #date {
-    position:absolute;
-    top:135px;
-    right:190px;
-    width:220px;
-    font-size:1.5em;
+    font-size: 2em;
 }
-#weather-extra {
-    position:absolute;
-    top:45px;
-    right:0;
-    width:180px;
-    font-size:1.5em;
+
+#weather {
+    position: absolute;
+    top: 35px;
+    right: 0;
+    width: 350px;
+    font-size: 5em;
 }
+
+.smaller {
+    font-size: .6em;
+    color: #aaa;
+}
+
 .icon-column {
-    float:left;
-    width:35px;
-    text-align:center;
+    float: left;
+    width: 45px;
+    text-align: center;
 }
+
+#current {
+    position: absolute;
+    top: 0;
+    right: 200px;
+    width: 180px;
+    text-align: right;
+}
+
+#extra {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 180px;
+    font-size: .3em;
+}
+
+#line {
+    position: fixed;
+    top: 256px;
+    right: 300px;
+    width: 1px;
+    height: 100%;
+    background-color: #aaa;
+}
+
 #forecast {
-    position:absolute;
-    top:165px;
-    right:0;
-    width:410px;
-    font-size:1.1em;
-    color:#999;
+    position: absolute;
+    top: 203px;
+    right: 0;
+    width: 278px;
+    font-size: 2em;
 }
-.forecast-row {
-    clear:both;
-    height:85px;
-    margin-top:10px;
+
+#forecast li {
+    padding-left: 10px;
 }
-.forecast-hour {
-    float:left;
-    font-size:1.6em;
-    width:100px;
-    text-align:center;
+
+#forecast li table {
+    border: 0 none;
+    border-spacing: 1px;
+    border-collapse: separate;
 }
-.forecast-hour .hour {
-    font-size:0.5em;
-    display:block;
-}
-#events {
-    position:absolute;
-    text-align:right;
-    font-size:1.5em;
-    top:460px;
-    right:50px;
-    width:700px;
-}
-.event {
-    padding:10px 0;
-}
-.date {
-    float:right;
-    font-size:0.8em;
-    vertical-align:bottom;
-    width:150px;
-    text-align:left;
-    margin-left:20px;
-    color:#999;
+
+#forecast li td {
+    text-align: center;
+    padding: 0 5px;
 }

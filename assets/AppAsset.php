@@ -35,12 +35,5 @@ class AppAsset extends AssetBundle
     /**
      * @var array
      */
-    public $js = [
-        'js/mirror.js',
-    ];
-
-    /**
-     * @var array
-     */
-    public $depends = [];
+    public $js = ['js/mirror.js'];
 }

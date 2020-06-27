@@ -9,6 +9,7 @@ return [
     'id' => 'pi-mirror',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
+    'timeZone' => 'Europe/Warsaw',
     'components' => [
         'request' => [
             'cookieValidationKey' => 'G_D9zNoNXCFZmd0hcsRaqDLWkbc4id7C',
@@ -31,8 +32,6 @@ return [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
-            'rules' => [
-            ],
         ],
     ],
     'params' => require __DIR__ . '/params-local.php',

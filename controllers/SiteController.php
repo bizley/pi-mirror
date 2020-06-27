@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace app\controllers;
 
-use app\models\GoogleCalendar;
 use app\models\OpenWeatherMap;
-use Yii;
+use yii\base\InvalidConfigException;
 use yii\web\Controller;
 use yii\web\Response;
 use yii\web\ErrorAction;
@@ -38,107 +37,38 @@ class SiteController extends Controller
     {
         return $this->render('index');
     }
-    
+
     /**
-     * AJAX weather response.
-     * @return array
+     * @return Response
+     * @throws InvalidConfigException
      */
-    public function actionWeather(): array
+    public function actionData(): Response
     {
-        Yii::$app->response->format = Response::FORMAT_JSON;
-        
-        $weather = new OpenWeatherMap(['key' => Yii::$app->params['open-weather-map-api-id']]);
-        
-        $period  = 'day';
+        $data = new OpenWeatherMap();
 
-        $sunrise = $weather->getSunrise();
-        $sunset  = $weather->getSunset();
-
-        $now = time();
-        $currentHour = date('G');
-
-        if ($sunrise !== null && $sunset !== null) {
-            if ($now < $sunrise || $now > $sunset) {
-                $period = 'night';
-            }
-        } elseif ($currentHour < 6 || $currentHour >= 18) {
-            $period = 'night';
-        }
-        
-        return [
-            'period' => $period,
-            'weatherId' => $weather->getWeatherId(),
-            'temp' => $weather->getTemp(),
-            'pressure' => $weather->getPressure(),
-            'humidity' => $weather->getHumidity(),
-            'windDeg' => $weather->getWindDeg(),
-            'windSpeed' => $weather->getWindSpeed(),
-            'clouds' => $weather->getClouds(),
-        ];
-    }
-    
-    /**
-     * AJAX forecast weather response.
-     * @return array
-     */
-    public function actionForecast(): array
-    {
-        Yii::$app->response->format = Response::FORMAT_JSON;
-        
-        $forecast = new OpenWeatherMap(['key' => Yii::$app->params['open-weather-map-api-id']]);
-        
-        return [
-            'today' => $forecast->getToday(),
-            'tomorrow' => $forecast->getTomorrow(),
-            'overmorrow' => $forecast->getOvermorrow(),
-        ];
-    }
-    
-    /**
-     * AJAX calendar events response.
-     * @return array
-     */
-    public function actionEvents(): array
-    {
-        Yii::$app->response->format = Response::FORMAT_JSON;
-        
-        $upcoming = [];
-        $calendar = new GoogleCalendar();
-        
-        $specificCals = [
-            'primary',
-            Yii::$app->params['calendars']['birthdays'],
-            Yii::$app->params['calendars']['holidays'],
-        ];
-
-        foreach ($specificCals as $cal) {
-            $events = $calendar->getEvents($cal);
-
-            /* @var $event \Google_Service_Calendar_Events */
-            foreach ($events->getItems() as $event) {
-                $start = $event->start->dateTime;
-
-                if (empty($start)) {
-                    $start = $event->start->date;
-                    $date  = date('Y/m/d', strtotime($start));
-                } else {
-                    $date  = date('H:i Y/m/d', strtotime($start));
-                }
-
-                $upcoming[] = [
-                    'stamp' => strtotime($start),
-                    'event' => $event->getSummary(),
-                    'date' => $date,
-                ];
-            }
-        }
-
-        if (!empty($upcoming)) {
-            uasort($upcoming, function ($a, $b) {
-                return $a['stamp'] <=> $b['stamp'];
-            });
-        }
-        
-        return \array_slice($upcoming, 0, 10);
+        return $this->asJson(
+            [
+                'current' => $data->getCurrentWeather(),
+                'hourly' => [
+                    $data->getHourlyWeather(0),
+                    $data->getHourlyWeather(1),
+                    $data->getHourlyWeather(2),
+                    $data->getHourlyWeather(3),
+                    $data->getHourlyWeather(5),
+                    $data->getHourlyWeather(7),
+                    $data->getHourlyWeather(10),
+                    $data->getHourlyWeather(13),
+                ],
+                'daily' => [
+                    $data->getDailyWeather(0),
+                    $data->getDailyWeather(1),
+                    $data->getDailyWeather(2),
+                    $data->getDailyWeather(3),
+                    $data->getDailyWeather(4),
+                    $data->getDailyWeather(5),
+                    $data->getDailyWeather(6),
+                ]
+            ]
+        );
     }
 }

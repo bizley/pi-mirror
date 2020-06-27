@@ -1,0 +1,28 @@
+version: "3.7"
+services:
+  mirror_web:
+    restart: "no"
+    image: nginx:alpine
+    volumes: 
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ../:/var/www/html
+    ports:
+      - "8000:80"
+    networks:
+      - dev
+    depends_on:
+      - mirror_php
+
+  mirror_php:
+    restart: "no"
+    build: ./php/
+    working_dir: /var/www/html
+    volumes:
+      - ../:/var/www/html
+    networks:
+      - dev
+
+networks:
+  dev:
+    external:
+      name: dev

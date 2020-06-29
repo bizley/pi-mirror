@@ -111,6 +111,7 @@ const displayWeather = data => {
             + '</li>'
     })
     html('forecast', forecastHourly.join('') + forecastDaily.join(''))
+    document.getElementById('line').style.display = 'block';
 }
 const weather = () => {
     fetch('/site/data')
@@ -120,4 +121,4 @@ const weather = () => {
 }
 weather()
 window.setInterval(clock, 1000)
-window.setInterval(weather, 600000)
+window.setInterval(weather, 60000)

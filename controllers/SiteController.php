@@ -53,11 +53,9 @@ class SiteController extends Controller
                     $data->getHourlyWeather(0),
                     $data->getHourlyWeather(1),
                     $data->getHourlyWeather(2),
-                    $data->getHourlyWeather(3),
-                    $data->getHourlyWeather(5),
-                    $data->getHourlyWeather(7),
-                    $data->getHourlyWeather(10),
-                    $data->getHourlyWeather(13),
+                    $data->getHourlyWeather(4),
+                    $data->getHourlyWeather(6),
+                    $data->getHourlyWeather(8),
                 ],
                 'daily' => [
                     $data->getDailyWeather(0),
@@ -66,7 +64,6 @@ class SiteController extends Controller
                     $data->getDailyWeather(3),
                     $data->getDailyWeather(4),
                     $data->getDailyWeather(5),
-                    $data->getDailyWeather(6),
                 ]
             ]
         );

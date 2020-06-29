@@ -1,7 +1,7 @@
 version: "3.7"
 services:
   mirror_web:
-    restart: "no"
+    restart: unless-stopped
     image: nginx:alpine
     volumes: 
       - ./nginx/conf.d:/etc/nginx/conf.d
@@ -14,7 +14,7 @@ services:
       - mirror_php
 
   mirror_php:
-    restart: "no"
+    restart: unless-stopped
     build: ./php/
     working_dir: /var/www/html
     volumes:

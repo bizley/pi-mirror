@@ -20,6 +20,10 @@ return [
 
 `*OWM` = See https://openweathermap.org/api/one-call-api for options 
 
+### Docker Env
+
+`docker-compose` is located in `./docker` folder.
+
 ## Raspbian:
 
 ### /boot/config.txt

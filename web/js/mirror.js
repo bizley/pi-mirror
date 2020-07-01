@@ -40,7 +40,7 @@ const clock = () => {
     html('hours', (hours < 10 ? '0' : '') + hours)
     html('minutes', (minutes < 10 ? '0' : '') + minutes)
     html('colon', seconds % 2 ? '' : ':')
-    html('dateString', dayName(dayNumber) + ', ' + (day < 10 ? '0' : '') + day + monthName(month) + year)
+    html('dateString', dayName(dayNumber) + ', ' + day + monthName(month) + year)
 }
 const displayWeather = data => {
     let weather = '';

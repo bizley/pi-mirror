@@ -182,4 +182,18 @@ class OpenWeatherMap extends Component
 
         return null;
     }
+
+    public function getLastFetchDate(): ?string
+    {
+        $weather = Yii::$app->cache->get('OpenWeatherMap');
+        if (
+            $weather === false
+            || !array_key_exists('current', $weather)
+            || !array_key_exists('dt', $weather['current'])
+        ) {
+            return null;
+        }
+
+        return Yii::$app->formatter->asDatetime($weather['current']['dt'], 'yyyy-MM-dd HH:mm');
+    }
 }

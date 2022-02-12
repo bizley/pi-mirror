@@ -43,6 +43,11 @@ body {
     color: #aaa;
 }
 
+.gray {
+    font-size: .5em;
+    color: #666;
+}
+
 .icon-column {
     float: left;
     width: 45px;

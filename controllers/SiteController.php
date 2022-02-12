@@ -64,7 +64,8 @@ class SiteController extends Controller
                     $data->getDailyWeather(3),
                     $data->getDailyWeather(4),
                     $data->getDailyWeather(5),
-                ]
+                ],
+                'lastDate' => $data->getLastFetchDate(),
             ]
         );
     }

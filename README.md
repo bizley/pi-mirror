@@ -42,7 +42,7 @@ display_hdmi_rotate=1
 
 Run Chromium in kiosk mode with Open Weather Map interface:
 ```shell script
-@chromium-browser -kiosk -noerrdialogs http://localhost:8000
+@chromium-browser -kiosk -noerrdialogs --disable-session-crashed-bubble http://localhost:8000
 ```
 
 Hide cursor:

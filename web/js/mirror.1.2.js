@@ -44,6 +44,7 @@ const clock = () => {
 }
 const displayWeather = data => {
     let weather = '';
+    document.getElementById('offline').style.display = data.online ? 'none' : 'block';
     if (data.current === null) {
         html('current', '')
         html('sun', 'brak danych aktualnej pogody')

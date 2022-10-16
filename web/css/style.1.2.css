@@ -102,3 +102,9 @@ body {
     text-align: center;
     padding: 0 5px;
 }
+
+#offline {
+    margin-top: 300px;
+    font-size: 3em;
+    display: none;
+}

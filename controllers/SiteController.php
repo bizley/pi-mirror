@@ -48,6 +48,7 @@ class SiteController extends Controller
 
         return $this->asJson(
             [
+                'online' => $data->getWeather() !== false,
                 'current' => $data->getCurrentWeather(),
                 'hourly' => [
                     $data->getHourlyWeather(0),

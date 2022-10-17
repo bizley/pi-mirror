@@ -27,7 +27,7 @@ class AppAsset extends AssetBundle
      */
     public $css = [
         'https://fonts.googleapis.com/css?family=Dosis:400,700&subset=latin,latin-ext',
-        'css/style.1.2.css',
+        'css/style.1.3.css',
         'css/weather-icons.min.css',
         'css/weather-icons-wind.min.css',
     ];
@@ -35,5 +35,5 @@ class AppAsset extends AssetBundle
     /**
      * @var array
      */
-    public $js = ['js/mirror.1.2.js'];
+    public $js = ['js/mirror.1.3.js'];
 }

@@ -125,6 +125,12 @@ const displayWeather = data => {
         document.getElementById('line').style.display = 'block';
     }
 }
+const displayMpk = data => {
+    const vehicles = data.map(item => {
+        return '<div class="' + (item.moving ? 'move' : 'stop') + '">' + item.nr + '</div>'
+    })
+    html('mpk', vehicles.join(''))
+}
 const weather = () => {
     fetch('/site/data')
         .then(response => response.json())
@@ -132,5 +138,13 @@ const weather = () => {
         .catch(err => console.error("Something went wrong!", err));
 }
 weather()
+const mpk = () => {
+    fetch('/site/mpk')
+        .then(response => response.json())
+        .then(data => displayMpk(data))
+        .catch(err => console.error("Something went wrong!", err));
+}
+mpk()
 window.setInterval(clock, 1000)
 window.setInterval(weather, 60000)
+window.setInterval(mpk, 60000)

@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace app\controllers;
 
+use app\models\MPK;
 use app\models\OpenWeatherMap;
 use yii\base\InvalidConfigException;
 use yii\web\Controller;
-use yii\web\Response;
 use yii\web\ErrorAction;
+use yii\web\Response;
 
 /**
  * PI Mirror site controller.
@@ -69,5 +70,10 @@ class SiteController extends Controller
                 'lastDate' => $data->getLastFetchDate(),
             ]
         );
+    }
+
+    public function actionMpk(): Response
+    {
+        return $this->asJson((new MPK())->getPositions());
     }
 }

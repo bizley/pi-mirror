@@ -16,6 +16,7 @@ $this->title = 'PI Mirror';
     <div id="offline">LUSTRO JEST OFFLINE</div>
 </div>
 <div id="line"></div>
+<div id="mpk"></div>
 <div id="weather">
     <div id="current"></div>
     <div id="extra"></div>

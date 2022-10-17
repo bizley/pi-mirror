@@ -108,3 +108,23 @@ body {
     font-size: 3em;
     display: none;
 }
+
+#mpk {
+    position: absolute;
+    top: 40px;
+    right: 400px;
+    font-size: 2em;
+}
+
+#mpk div {
+    border: 2px solid #fff;
+    border-radius: 6px;
+    padding: 0 7px;
+    float: left;
+    margin-left: 2px;
+}
+
+#mpk .move {
+    background-color: #fff;
+    color: #000;
+}

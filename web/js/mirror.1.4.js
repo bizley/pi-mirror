@@ -127,9 +127,9 @@ const displayWeather = data => {
 }
 const displayMpk = data => {
     const vehicles = data.map(item => {
-        return '<div class="' + (item.moving ? 'move' : 'stop') + '">' + item.nr + '</div>'
+        return '<div class="" style="position:relative;top:' + item.position[0] + 'px;left:' + item.position[1] + 'px;color:#fff">' + item.nr + '</div>'
     })
-    html('mpk', vehicles.join(''))
+    html('map', vehicles.join(''))
 }
 const weather = () => {
     fetch('/site/data')

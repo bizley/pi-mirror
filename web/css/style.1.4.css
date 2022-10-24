@@ -109,22 +109,18 @@ body {
     display: none;
 }
 
-#mpk {
+#map {
     position: absolute;
-    top: 40px;
-    right: 400px;
-    font-size: 2em;
+    top: 300px;
+    right: 330px;
+    width: 641px;
+    height: 718px;
 }
 
-#mpk div {
-    border: 2px solid #fff;
+#map div {
+    width: 24px;
     border-radius: 6px;
-    padding: 0 7px;
-    float: left;
-    margin-left: 2px;
-}
-
-#mpk .move {
     background-color: #fff;
-    color: #000;
+    color: #000 !important;
+    text-align: center;
 }

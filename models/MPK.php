@@ -10,11 +10,8 @@ use Yii;
 use yii\base\Component;
 use yii\httpclient\Client;
 
-use function abs;
 use function array_key_exists;
-use function array_values;
 use function is_array;
-use function sqrt;
 
 /**
  * MPK
@@ -98,53 +95,36 @@ class MPK extends Component
             if (
                 array_key_exists('name', $position)
                 && array_key_exists('type', $position)
-                && array_key_exists('k', $position)
-                && $this->isInRadius($position)
+                && array_key_exists('x', $position)
+                && array_key_exists('y', $position)
+                && $this->isInRadius($position['x'], $position['y'])
             ) {
-                $currentPositions[$position['k']] = [
-                    'lat' => $position['x'],
-                    'lng' => $position['y'],
+                $currentPositions[] = [
+                    'position' => $this->positionToPixels($position['x'], $position['y']),
                     'nr' => $position['name'],
                     'type' => $position['type'],
-                    'moving' => false,
                 ];
             }
         }
 
-        $previousPositions = Yii::$app->cache->get('MPKPositions');
-        if ($previousPositions === false) {
-            Yii::$app->cache->set('MPKPositions', $currentPositions, self::CACHE_DURATION);
-        } else {
-            foreach ($previousPositions as $k => $data) {
-                if (
-                    array_key_exists($k, $currentPositions)
-                    && (
-                        $data['lat'] !== $currentPositions[$k]['lat']
-                        || $data['lng'] !== $currentPositions[$k]['lng']
-                    )
-                ) {
-                    $currentPositions[$k]['moving'] = true;
-                }
-            }
-        }
-
-        $normalizedPositions = array_values($currentPositions);
-        usort($normalizedPositions, static fn ($a, $b) => $b['nr'] <=> $a['nr']);
-
-        return $normalizedPositions;
+        return $currentPositions;
     }
 
-    private function isInRadius(array $position): bool
+    private function isInRadius(float $lat, float $lng): bool
     {
-        if (!array_key_exists('x', $position) || !array_key_exists('y', $position)) {
-            return false;
-        }
+        $mapBounds = Yii::$app->params['map'];
+        return $lat <= $mapBounds['top']
+            && $lat >= $mapBounds['bottom']
+            && $lng >= $mapBounds['left']
+            && $lng <= $mapBounds['right'];
+    }
 
-        $lat = $position['x'] ?? 0;
-        $lng = $position['y'] ?? 0;
-
-        return sqrt(
-            abs(Yii::$app->params['latitude'] - $lat) ** 2 + abs(Yii::$app->params['longitude'] - $lng) ** 2
-        ) <= (Yii::$app->params['radius'] ?? 0);
+    private function positionToPixels(float $lat, float $lng): array
+    {
+        $mapBounds = Yii::$app->params['map'];
+        return [
+            718 - round(718 * ($lat - $mapBounds['bottom']) / ($mapBounds['top'] - $mapBounds['bottom'])),
+            round(641 * ($lng - $mapBounds['left']) / ($mapBounds['right'] - $mapBounds['left'])),
+        ];
     }
 }
